@@ -320,6 +320,8 @@ class SOMALayer(nn.Module):
         rest_bind_transforms_world = self._cached_bind_transforms_world
 
         batch_size, num_joints = poses.shape[:2]
+        if transl is None:
+            transl = torch.zeros(batch_size, 3, device=poses.device)
         if pose2rot:
             poses_rot = batch_rodrigues(poses.view(-1, 3)).view(batch_size, num_joints, 3, 3)
         else:
