@@ -60,6 +60,7 @@ def save_soma_npz(
     unit="meters",
     keep_root=False,
     extra_arrays=None,
+    save_progress=None,
 ):
     """Save SOMA animation to an .npz file.
 
@@ -95,6 +96,8 @@ def save_soma_npz(
             ``"centimeters"``, or ``"millimeters"``).
         keep_root: Include virtual Root joint (J=78 vs J=77).
         extra_arrays: Optional dict of additional arrays to include.
+        save_progress: If ``(index, total)`` (1-based, inclusive total), the first
+            "Saved" line is prefixed with ``[index/total]`` for batch progress.
     """
     joint_names = list(joint_names)
 
@@ -145,7 +148,11 @@ def save_soma_npz(
 
     pose_label = "absolute" if absolute_pose else "relative"
     root_label = "with Root (J=78)" if keep_root else "no Root (J=77)"
-    print(f"\nSaved: {out_path}")
+    if save_progress is not None:
+        i, tot = int(save_progress[0]), int(save_progress[1])
+        print(f"\nSaved [{i}/{tot}]: {out_path}")
+    else:
+        print(f"\nSaved: {out_path}")
     print(f"  identity_model_type: {identity_model_type}")
     print(f"  identity_coeffs: {_to_f32(identity_coeffs).shape}")
     if scale_params is not None:
